@@ -7,6 +7,7 @@ import {
 import * as Elements from '../viewpage/elements.js';
 import { DEV } from "../model/constants.js";
 import { info } from "../viewpage/util.js";
+import { routing } from "./route.js";
 
 const auth = getAuth();
 
@@ -56,6 +57,9 @@ function authStateChangedObserver(user) {
         for (let i=0;  i <Elements.modalpostauthElements.length; i++) {
             Elements.modalpostauthElements[i].style.display = 'block';  
         }  
+        const pathname = window.location.pathname;
+        const hash = window.location.hash;
+        routing(pathname, hash);
     } else {
         //sign out
         for (let i=0;  i <Elements.modalpreauthElements.length; i++) {
