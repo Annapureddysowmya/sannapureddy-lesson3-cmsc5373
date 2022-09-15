@@ -8,6 +8,7 @@ import * as Elements from '../viewpage/elements.js';
 import { DEV } from "../model/constants.js";
 import { info } from "../viewpage/util.js";
 import { routing } from "./route.js";
+import { welcome_page } from "../viewpage/welcome_page.js";
 
 const auth = getAuth();
 
@@ -47,7 +48,7 @@ export function addEventListeners() {
 
 }
 
-function authStateChangedObserver(user) {
+async function authStateChangedObserver(user) {
     currentUser = user;
     if (user) {
         //sign in
@@ -68,5 +69,6 @@ function authStateChangedObserver(user) {
         for (let i=0;  i <Elements.modalpostauthElements.length; i++) {
             Elements.modalpostauthElements[i].style.display = 'none';
         }
+        Elements.root.innerHTML = await welcome_page();
     }
 }
