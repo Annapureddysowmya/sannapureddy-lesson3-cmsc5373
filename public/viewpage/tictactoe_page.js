@@ -3,6 +3,7 @@ import { routePath } from '../controller/route.js';
 import { currentUser } from '../controller/firebase_auth.js';
 import { unauthorizedAccess } from './unauthorized_access_message.js';
 import { TicTacToeGame, marking } from '../model/tictactoe_game.js';
+import { info } from './util.js';
 
 export function addEventListeners() {
 
@@ -28,7 +29,7 @@ const imageSource = {
     U: '/images/U.png',
 };
 
-export async  function tictactoe_page() {
+export async function tictactoe_page() {
     if (!currentUser) {
         Elements.root.innerHTML = unauthorizedAccess();
         return;
@@ -36,16 +37,48 @@ export async  function tictactoe_page() {
 
     gameModel = new TicTacToeGame();
 
-    let  html;
-    const response = await fetch ('viewpage/templates/tictactoe_page.html', {cache: 'no-store'});
-    html =  await response.text();
+    let html;
+    const response = await fetch('viewpage/templates/tictactoe_page.html', { cache: 'no-store' });
+    html = await response.text();
     Elements.root.innerHTML = html;
 
     getScreenElements();
+    addGameEvents();
     updateScreen();
 }
 
-function getScreenElements( ) {
+function addGameEvents() {
+    for (let i = 0; i < 9; i++) {
+        screen.buttons[i].addEventListener('click', buttonPressListener);
+    }
+}
+
+function buttonPressListener(event) {
+    const buttonId = event.target.id;
+    const pos = buttonId[buttonId.length - 1];
+    gameModel.board[pos] = gameModel.turn;
+    gameModel.toggleTurns();
+    gameModel.moves++;
+
+    gameModel.setWinner();
+    if (gameModel.winner != null) {
+        if (gameModel.winner == marking.U) {
+            gameModel.status = 'Game Over: DRAW';
+        } else {
+            gameModel.status = `
+            Game Over - Winner: ${marking[gameModel.winner]} with
+            ${gameModel.moves} moves        
+        `;
+        }
+        updateScreen();
+        info('Game Over', gameModel.status);
+    } else {
+        updateScreen();
+    }
+
+}
+
+function getScreenElements() {
     screen.turn = document.getElementById('turn');
     screen.moves = document.getElementById('moves');
     screen.buttons = [];
@@ -63,6 +96,6 @@ function updateScreen() {
 
     for (let i = 0; i < 9; i++) {
         screen.images[i].src = imageSource[gameModel.board[i]];
-        screen.buttons[i].disabled = gameModel.board[i] != marking.U;
+        screen.buttons[i].disabled = gameModel.board[i] != marking.U || gameModel.winner != null;
     }
 }
