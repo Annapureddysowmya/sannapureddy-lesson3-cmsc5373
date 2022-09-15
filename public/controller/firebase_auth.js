@@ -1,5 +1,7 @@
-import { getAuth, signInWithEmailAndPassword,
+import { 
+    getAuth, signInWithEmailAndPassword,
     onAuthStateChanged,
+    signOut, 
  } from "https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js"
 
 import * as Elements from '../viewpage/elements.js';
@@ -10,7 +12,7 @@ const auth = getAuth();
 
 export let currentUser = null;
 
-export function addEventListeners(){
+export function addEventListeners() {
 
     Elements.formSignin.addEventListener('submit',async e => {
         e.preventDefault();
@@ -26,6 +28,16 @@ export function addEventListeners(){
             const errorMessage = e.message;
             info('Sign in Error', errorMessage, Elements.modalSignin);
 
+        }
+
+    });
+
+    Elements.menus.signOut.addEventListener('click',async () =>{
+        try {
+            await signOut(auth);
+        } catch (e) {
+            if (DEV) console.log('Sign out error', e);
+            info('Sign out error', JSON.stringify(e));
         }
 
     });
