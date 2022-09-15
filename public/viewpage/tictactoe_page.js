@@ -21,6 +21,10 @@ let screen = {
     moves: null,
     buttons: null,
     images: null,
+    newGameButton: null,
+    historyButton: null,
+    clearButton: null,
+    statusMessage: null,
 }
 
 const imageSource = {
@@ -51,6 +55,11 @@ function addGameEvents() {
     for (let i = 0; i < 9; i++) {
         screen.buttons[i].addEventListener('click', buttonPressListener);
     }
+
+    screen.newGameButton.addEventListener('click', () => {
+        gameModel = new TicTacToeGame();
+        updateScreen();
+    })
 }
 
 function buttonPressListener(event) {
@@ -87,6 +96,10 @@ function getScreenElements() {
         screen.buttons.push(document.getElementById(`button-${i}`));
         screen.images.push(document.getElementById(`image-${i}`));
     }
+    screen.newGameButton = document.getElementById('button-new-game');
+    screen.historyButton = document.getElementById('button-history');
+    screen.clearButton = document.getElementById('button-clear');
+    screen.statusMessage = document.getElementById('status-message');
 }
 
 function updateScreen() {
@@ -98,4 +111,7 @@ function updateScreen() {
         screen.images[i].src = imageSource[gameModel.board[i]];
         screen.buttons[i].disabled = gameModel.board[i] != marking.U || gameModel.winner != null;
     }
+
+    screen.newGameButton.disabled = gameModel.winner == null;
+    screen.statusMessage.innerHTML = gameModel.status;
 }
