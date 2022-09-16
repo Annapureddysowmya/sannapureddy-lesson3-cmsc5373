@@ -4,6 +4,7 @@ import { currentUser } from '../controller/firebase_auth.js';
 import { unauthorizedAccess } from './unauthorized_access_message.js';
 import { TicTacToeGame, marking } from '../model/tictactoe_game.js';
 import { info } from './util.js';
+import { addTicTacToeGameHistory } from '../controller/firestore_controller.js';
 
 export function addEventListeners() {
 
@@ -62,7 +63,7 @@ function addGameEvents() {
     })
 }
 
-function buttonPressListener(event) {
+async function buttonPressListener(event) {
     const buttonId = event.target.id;
     const pos = buttonId[buttonId.length - 1];
     gameModel.board[pos] = gameModel.turn;
@@ -80,6 +81,19 @@ function buttonPressListener(event) {
         `;
         }
         updateScreen();
+        const gamePlay = {
+            email: currentUser.email,
+            winner: gameModel.winner,
+            moves: gameModel.moves,
+            timestamp: Date.now(),
+        };
+        try{
+            await addTicTacToeGameHistory(gamePlay);
+            info('Game Over', gameModel.status);
+        } catch (e) {
+            info('Game Over', `Failed to save the game play history: ${e}`);
+            if (DEV) console.log('Game Over: failed to save:',e);
+        }
         info('Game Over', gameModel.status);
     } else {
         updateScreen();

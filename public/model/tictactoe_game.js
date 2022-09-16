@@ -73,7 +73,7 @@ export class TicTacToeGame {
     checkDiag2() {
         if (this.board[0] != marking.U
             && this.board[0] == this.board[4]
-            && this.board[0] == this.board[6]) {
+            && this.board[0] == this.board[8]) {
                 return this.board[0];
             } else {
                 return null;
