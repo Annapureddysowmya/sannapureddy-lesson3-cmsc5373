@@ -7,12 +7,12 @@ export const routePath = {
 }
 
 export const routes = [
-    {path: routePath.TICTACTOE, page: tictactoe_page },
-    {path: routePath.ABOUT, page: about_page}
+    {path: routePath.TICTACTOE, page: tictactoe_page},
+    {path: routePath.ABOUT, page: about_page},
 ];
 
 export function routing(pathname, hash) {
-    const route = routes.find(element  => element.path == pathname);
+    const route = routes.find(element => element.path == pathname);
     if (route) route.page();
     else routes[0].page();
 }

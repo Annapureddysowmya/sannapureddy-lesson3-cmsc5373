@@ -5,9 +5,10 @@ export function info(title, body, closeModal){
     modalInfobox.title.innerHTML = title;
     modalInfobox.body.innerHTML = body;
     modalInfobox.modal.show();
+
 }
 
-export function disableButton(button) {
+export function disableButton(button){
     button.disabled = true;
     const originalLabel = button.innerHTML;
     button.innerHTML = 'Wait...';

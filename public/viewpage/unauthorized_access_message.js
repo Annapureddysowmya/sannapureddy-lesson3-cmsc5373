@@ -1,10 +1,7 @@
-export function unauthorizedAccess() {
+export function unauthorisedAccess() {
     return `
         <h1>
-            Unauthorized Access!
-
+                UNAUTHORIZED ACCESS !!
         </h1>
-    
-    
-    `;
+    `
 }

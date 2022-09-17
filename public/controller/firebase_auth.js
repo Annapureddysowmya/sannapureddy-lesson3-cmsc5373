@@ -1,72 +1,75 @@
-import { 
-    getAuth, signInWithEmailAndPassword,
+import {
+    getAuth, signInWithEmailAndPassword ,
     onAuthStateChanged,
-    signOut, 
- } from "https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js"
+    signOut,
+    } from 'https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js';
+    
 
 import * as Elements from '../viewpage/elements.js';
 import { DEV } from "../model/constants.js";
-import { info } from "../viewpage/util.js";
-import { routing } from "./route.js";
-import { welcome_page } from "../viewpage/welcome_page.js";
+import { info } from '../viewpage/util.js';
+import { routing } from './route.js';
+import { welcome_page } from '../viewpage/welcome_page.js';
+
 
 const auth = getAuth();
 
 export let currentUser = null;
 
-export function addEventListeners() {
+export function addEventListener() {
 
-    Elements.formSignin.addEventListener('submit',async e => {
-        e.preventDefault();
+    Elements.formSignIn.addEventListener('submit', async e => {
+        e.preventDefault(); //this is helps prevent refreshing the current page of form
         const email = e.target.email.value;
         const password = e.target.password.value;
-        try{
+        try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             Elements.modalSignin.hide();
+
         } catch (e) {
-            if (DEV) console.log('Sign In Error', e);
+
+            if (DEV) console.log('sign in error', e);
             const errorCode = e.code;
             const errorMessage = e.message;
             info('Sign in Error', errorMessage, Elements.modalSignin);
-
         }
-
     });
 
-    Elements.menus.signOut.addEventListener('click',async () =>{
+    Elements.menus.signOut.addEventListener('click', async () => {
+        //sign out from Firebase Auth
         try {
             await signOut(auth);
         } catch (e) {
-            if (DEV) console.log('Sign out error', e);
-            info('Sign out error', JSON.stringify(e));
+            if (DEV) console.log(`sign out error` + e);
+            info('sign out error', JSON.stringify(e));
         }
-
     });
-
-    onAuthStateChanged(auth, authStateChangedObserver);
+   
+    onAuthStateChanged(auth, onAuthStateChangedObserver);
 
 }
 
-async function authStateChangedObserver(user) {
+async function onAuthStateChangedObserver(user) {
     currentUser = user;
-    if (user) {
-        //sign in
-        for (let i=0;  i <Elements.modalpreauthElements.length; i++) {
+    if(user) {
+        //signin
+        for(let i = 0; i < Elements.modalpreauthElements.length; i++){
             Elements.modalpreauthElements[i].style.display = 'none';
         }
-        for (let i=0;  i <Elements.modalpostauthElements.length; i++) {
-            Elements.modalpostauthElements[i].style.display = 'block';  
-        }  
+        for(let i = 0; i < Elements.modalpostauthElements.length; i++){
+            Elements.modalpostauthElements[i].style.display = 'block';
+        }
         const pathname = window.location.pathname;
         const hash = window.location.hash;
-        routing(pathname, hash);
+        routing (pathname, hash);
+       
     } else {
-        //sign out
-        for (let i=0;  i <Elements.modalpreauthElements.length; i++) {
+
+        for(let i = 0; i <Elements.modalpreauthElements.length; i++){
             Elements.modalpreauthElements[i].style.display = 'block';
         }
-        for (let i=0;  i <Elements.modalpostauthElements.length; i++) {
+        for(let i = 0; i <Elements.modalpostauthElements.length; i++){
             Elements.modalpostauthElements[i].style.display = 'none';
         }
         Elements.root.innerHTML = await welcome_page();
